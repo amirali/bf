@@ -1,0 +1,34 @@
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <script src="wasm_exec.js"></script>
+        <script>
+            const go = new Go();
+            WebAssembly.instantiateStreaming(fetch("bf.wasm"), go.importObject).then((result) => {
+                go.run(result.instance);
+            })
+        </script>
+    </head>
+
+    <body>
+        <textarea id="program"></textarea> <br />
+        <input type="text" id="input" /> <br />
+        <button id="execute">execute</button> <br />
+        <p id="executionTime"></p>
+        <pre id="output"></pre>
+
+        <script>
+            let execute = function() {
+                let startTime = performance.now();
+                let program = document.getElementById("program").value;
+                let input = document.getElementById("input").value;
+                let output = execute_brainfuck(program, input);
+                let endTime = performance.now();
+                document.getElementById("executionTime").innerHTML = "Execution time: " + (endTime - startTime).toFixed(5) + "ms";
+                document.getElementById("output").innerHTML = output;
+            }
+
+            document.getElementById("execute").addEventListener("click", execute);
+        </script>
+    </body>
+</html>
