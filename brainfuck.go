@@ -59,6 +59,7 @@ type BrainfuckCompiler struct {
 	instructions []Instruction
 	memory       []uint8
 	output       []byte
+	inputs       int
 }
 
 func NewCompiler() *BrainfuckCompiler {
@@ -83,6 +84,7 @@ func (bf *BrainfuckCompiler) Compile(program string) error {
 			bf.instructions = append(bf.instructions, Instruction{Print, 0})
 		case ',':
 			bf.instructions = append(bf.instructions, Instruction{Read, 0})
+			bf.inputs++
 		case '[':
 			bf.instructions = append(bf.instructions, Instruction{BeginLoop, 0})
 			jumpStack = append(jumpStack, pc)
@@ -108,6 +110,10 @@ func (bf *BrainfuckCompiler) Compile(program string) error {
 func (bf *BrainfuckCompiler) Execute(input []byte) error {
 	pointer := uint16(0)
 	readCount := 0
+
+	if len(input) != bf.inputs {
+		return errors.New("Not enough input characters")
+	}
 
 	for pc := 0; pc < len(bf.instructions); pc++ {
 		switch bf.instructions[pc].operator {
