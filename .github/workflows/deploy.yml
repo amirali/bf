@@ -1,0 +1,58 @@
+name: Deploy to Github pages
+
+on:
+  push:
+    branches: [$default-branch]
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout repo
+      uses: actions/checkout@v3
+    - name: Setup Pages
+      id: pages
+      uses: actions/configure-pages@v4
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.17'
+    - name: Copy wasm-js file
+      run: cp $(shell go env GOROOT)/misc/wasm/wasm_exec.js wasm/
+    - name: Build
+      run: cd wasm && go build -o bf.wasm
+      env:
+        GOOS: js
+        GOARCH: wasm
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: ./wasm
+    
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
