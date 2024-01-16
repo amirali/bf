@@ -34,7 +34,7 @@ jobs:
       with:
         go-version: '1.17'
     - name: Copy wasm-js file
-      run: cp $(shell go env GOROOT)/misc/wasm/wasm_exec.js wasm/
+      run: cp $(go env GOROOT)/misc/wasm/wasm_exec.js wasm/
     - name: Build
       run: cd wasm && go build -o bf.wasm
       env:
