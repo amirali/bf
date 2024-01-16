@@ -12,9 +12,11 @@
     </head>
 
     <body>
-        <textarea id="program"></textarea> <br />
-        <input type="text" id="input" /> <br />
-        <button id="execute">execute</button> <br />
+        <label for="program">Program Instruction:</label>
+        <textarea name="program" id="program"></textarea>
+        <label for="input">Stdin:</label>
+        <input name="input" type="text" id="input" />
+        <button id="execute">execute</button>
         <p id="executionTime"></p>
         <pre id="output"></pre>
 
